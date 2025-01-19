@@ -16,6 +16,7 @@ def solve_maze(maze, start, end, algorithm="DFS"):
     """
     rows, cols = len(maze), len(maze[0])
     visited = set()
+    visitedSequence = []
     path = []
 
     def in_bounds(r, c):
@@ -24,12 +25,14 @@ def solve_maze(maze, start, end, algorithm="DFS"):
     def dfs(r, c):
         if (r, c) == end:
             path.append((r, c))
+            visitedSequence.append((r, c))
             return True
 
         if not in_bounds(r, c) or maze[r][c] == 1 or (r, c) in visited:
             return False
 
         visited.add((r, c))
+        visitedSequence.append((r, c))
         path.append((r, c))
 
         for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
@@ -42,7 +45,9 @@ def solve_maze(maze, start, end, algorithm="DFS"):
     def bfs():
         queue = deque([start])  # Queue for BFS
         prev = {}  # To reconstruct the path
+        
         visited.add(start)
+        visitedSequence.append(start)
 
         while queue:
             current = queue.popleft()
@@ -58,6 +63,7 @@ def solve_maze(maze, start, end, algorithm="DFS"):
                     and neighbor not in visited
                 ):
                     visited.add(neighbor)
+                    visitedSequence.append(neighbor) 
                     prev[neighbor] = current
                     queue.append(neighbor)
 
@@ -75,7 +81,10 @@ def solve_maze(maze, start, end, algorithm="DFS"):
 
         while pq:
             cost, current = heapq.heappop(pq)
+            if current in visited:
+                continue
             visited.add(current)
+            visitedSequence.append(current)
 
             if current == end:
                 break
@@ -107,7 +116,10 @@ def solve_maze(maze, start, end, algorithm="DFS"):
 
         while pq:
             _, g_score, current = heapq.heappop(pq)
+            if current in visited:
+                continue
             visited.add(current)
+            visitedSequence.append(current)
 
             if current == end:
                 break
@@ -140,7 +152,7 @@ def solve_maze(maze, start, end, algorithm="DFS"):
     else:
         raise ValueError(f"Unsupported algorithm: {algorithm}")
 
-    return {"solution": path, "visited": list(visited)}
+    return {"solution": path or [], "visitedSequence": visitedSequence or []}
 
 if __name__ == "__main__":
     # Example usage

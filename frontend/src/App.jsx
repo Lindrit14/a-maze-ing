@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import MazeDisplay from "./components/MazeDisplay";
+
+
 
 function App() {
   const [maze, setMaze] = useState([]);
@@ -11,6 +13,25 @@ function App() {
   const [startNode, setStartNode] = useState([1, 1]); // Default start node
   const [endNode, setEndNode] = useState([19, 19]); // Default end node
   const [mazeSize, setMazeSize] = useState(21); // Default maze size
+  const [animationIndex, setAnimationIndex] = useState(0); // For animation step
+  const [paused, setPaused] = useState(true); // Control pause/resume
+  const [animationSpeed, setAnimationSpeed] = useState(500); // Speed in ms
+
+useEffect(() => {
+  if (paused || !visited.length) return;
+
+  const timer = setInterval(() => {
+    setAnimationIndex((prev) => {
+      if (prev >= visited.length) {
+        clearInterval(timer);
+        return prev;
+      }
+      return prev + 1;
+    });
+  }, animationSpeed);
+
+  return () => clearInterval(timer); // Clean up
+}, [paused, visited, animationSpeed]);
 
   const fetchMaze = async () => {
     try {
@@ -38,15 +59,13 @@ function App() {
     try {
       const response = await fetch("http://localhost:3333/api/maze/solve", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           maze,
           algorithm: selectedAlgorithm,
           start: startNode,
-          end: endNode,
-        }),
+          end: endNode
+        })
       });
   
       if (!response.ok) {
@@ -54,13 +73,20 @@ function App() {
       }
   
       const data = await response.json();
-      setSolution(data.solution);
-      setVisited(data.visited);
+      // Ensure arrays exist (avoid 'undefined' errors)
+      setSolution(data.solution || []);
+      setVisited(data.visited || []);
+  
+      // Log them directly
+      console.log("Solution path:", data.solution);
+      console.log("Visited path:", data.visited);
+  
       setError(null);
     } catch (err) {
       setError(err.message);
     }
   };
+  
 
   const handleAlgorithmSelect = (algorithm) => {
     setSelectedAlgorithm(algorithm);
@@ -138,15 +164,33 @@ function App() {
         </label>
       </div>
 
+      <div>
+  <label>
+    Speed:
+    <select
+      value={animationSpeed}
+      onChange={(e) => setAnimationSpeed(parseInt(e.target.value, 10))}
+    >
+      <option value={1000}>Slow</option>
+      <option value={500}>Medium</option>
+      <option value={100}>Fast</option>
+    </select>
+  </label>
+  <button onClick={() => setPaused(!paused)}>
+    {paused ? "Resume" : "Pause"}
+  </button>
+</div>
+
+
       {error && <p style={{ color: "red" }}>{error}</p>}
       {maze.length > 0 && (
         <MazeDisplay
-          maze={maze}
-          start={startNode}
-          end={endNode}
-          solution={solution}
-          visited={visited}
-        />
+        maze={maze}
+        start={startNode}
+        end={endNode}
+        solution={solution}
+        visited={visited.slice(0, animationIndex)} // Only show up to current animationIndex
+      />
       )}
       {maze.length === 0 && !error && <p>Click "Generate Maze" to create a new maze!</p>}
     </div>

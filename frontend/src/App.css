@@ -86,12 +86,15 @@
 }
 
 .maze-cell.visited {
-  background-color: lightblue; /* Visited nodes */
+  background-color: lightblue;
+  transition: background-color 0.3s; 
 }
 
 .maze-cell.solution {
-  background-color: yellow; /* Solution path */
+  background-color: yellow;
+  transition: background-color 0.3s;
 }
+
 
 
 
