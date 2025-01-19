@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import MazeDisplay from "./components/MazeDisplay";
+import MazeSolverAnimation from "./components/MazeSolverAnimation";
 
 
 
@@ -16,6 +17,9 @@ function App() {
   const [animationIndex, setAnimationIndex] = useState(0); // For animation step
   const [paused, setPaused] = useState(true); // Control pause/resume
   const [animationSpeed, setAnimationSpeed] = useState(500); // Speed in ms
+  const [runtime, setRuntime] = useState(0); // Time taken to solve
+  const [totalVisitedSteps, setTotalVisitedSteps] = useState(0); // Visited steps
+  const [solutionSteps, setSolutionSteps] = useState(0); // Solution steps
 
 useEffect(() => {
   if (paused || !visited.length) return;
@@ -74,18 +78,25 @@ useEffect(() => {
   
       const data = await response.json();
       // Ensure arrays exist (avoid 'undefined' errors)
-      setSolution(data.solution || []);
-      setVisited(data.visited || []);
-  
+      const reversedSolution = data.solution ? [...data.solution].reverse() : [];
+      
+      setVisited(data.visitedSequence || []);
+      setSolution(reversedSolution || []);
+      setRuntime(data.runtime || 0); // Time taken
+      setTotalVisitedSteps(data.totalVisitedSteps || 0); // Total visited steps
+      setSolutionSteps(data.solutionSteps || 0); // Solution steps
       // Log them directly
       console.log("Solution path:", data.solution);
-      console.log("Visited path:", data.visited);
+      console.log("Visited path:", data.visitedSequence);
   
       setError(null);
     } catch (err) {
       setError(err.message);
     }
   };
+
+  console.log( "THIS IS VISITED",visited);
+  console.log( "THIS IS SOLUTION",solution.reverse());
   
 
   const handleAlgorithmSelect = (algorithm) => {
@@ -107,8 +118,11 @@ useEffect(() => {
     setEndNode([parsedSize - 2, parsedSize - 2]); // Reset end node
   };
 
+
+  
   return (
     <div>
+      
       <button onClick={fetchMaze}>Generate Maze</button>
 
       <div className="dropdown">
@@ -142,6 +156,10 @@ useEffect(() => {
           <option value={61}>60 x 60</option>
           <option value={71}>70 x 70</option>
           <option value={81}>80 x 80</option>
+          <option value={201}>200 x 200</option>
+          <option value={301}>300 x 300</option>
+          <option value={501}>500 x 500</option>
+          <option value={1001}>INSANE x INSANE</option>
         </select>
       </div>
 
@@ -171,28 +189,33 @@ useEffect(() => {
       value={animationSpeed}
       onChange={(e) => setAnimationSpeed(parseInt(e.target.value, 10))}
     >
-      <option value={1000}>Slow</option>
-      <option value={500}>Medium</option>
-      <option value={100}>Fast</option>
+      <option value={150}>Slow</option>
+      <option value={50}>Medium</option>
+      <option value={25}>Fast</option>
+      <option value={1}>SuperFast</option>
     </select>
   </label>
-  <button onClick={() => setPaused(!paused)}>
-    {paused ? "Resume" : "Pause"}
-  </button>
+  
 </div>
-
+    
 
       {error && <p style={{ color: "red" }}>{error}</p>}
       {maze.length > 0 && (
-        <MazeDisplay
+        
+        <MazeSolverAnimation
         maze={maze}
+        visited={visited} // from solver
+        solution={solution}
         start={startNode}
         end={endNode}
-        solution={solution}
-        visited={visited.slice(0, animationIndex)} // Only show up to current animationIndex
+        speed={animationSpeed}  // e.g. 100, 500, 1000
+        runtime={runtime}
+        totalVisitedSteps={totalVisitedSteps}
+        solutionSteps={solutionSteps}
       />
       )}
       {maze.length === 0 && !error && <p>Click "Generate Maze" to create a new maze!</p>}
+      
     </div>
   );
 }

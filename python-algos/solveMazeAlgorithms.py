@@ -1,6 +1,7 @@
 import heapq
 import json
 from collections import deque
+import time
 
 def solve_maze(maze, start, end, algorithm="DFS"):
     """
@@ -18,6 +19,8 @@ def solve_maze(maze, start, end, algorithm="DFS"):
     visited = set()
     visitedSequence = []
     path = []
+
+    start_time = time.time()
 
     def in_bounds(r, c):
         return 0 <= r < rows and 0 <= c < cols
@@ -152,7 +155,17 @@ def solve_maze(maze, start, end, algorithm="DFS"):
     else:
         raise ValueError(f"Unsupported algorithm: {algorithm}")
 
-    return {"solution": path or [], "visitedSequence": visitedSequence or []}
+
+    end_time = time.time()  # End timing
+    runtime = end_time - start_time  # Total runtime in seconds
+
+    return {
+        "solution": path or [],
+        "visitedSequence": visitedSequence or [],
+        "runtime": runtime,
+        "totalVisitedSteps": len(visitedSequence),
+        "solutionSteps": len(path),
+    }
 
 if __name__ == "__main__":
     # Example usage

@@ -42,62 +42,57 @@
 }
 /* App.css */
 
-/* The container for the maze grid */
 .maze-grid {
   display: flex;
-  flex-direction: column; /* Arrange rows vertically */
-  gap: 2px; /* Space between rows (optional) */
-  padding: 10px;
-  background-color: #f7f7f7; /* Light background for visibility */
-  border: 2px solid #ccc; /* Border around the maze grid */
+  flex-direction: column;
+  gap: 2px;
 }
 
-/* Each row in the maze */
 .maze-row {
   display: flex;
-  gap: 2px; /* Space between cells (optional) */
+  gap: 2px;
 }
 
-/* Base style for each cell */
 .maze-cell {
-  width: 20px; /* Fixed width for each cell */
-  height: 20px; /* Fixed height for each cell */
-  border: 1px solid #ddd; /* Optional border around cells */
-  background-color: white; /* Default background color */
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ddd;
+  background-color: white;
 }
 
-/* Wall cells */
 .maze-cell.wall {
-  background-color: black; /* Walls appear as black cells */
+  background-color: black;
 }
 
-/* Start cell */
 .maze-cell.start {
-  background-color: green; /* Start cell appears green */
+  background-color: green;
 }
 
-/* End cell */
 .maze-cell.end {
-  background-color: red; /* End cell appears red */
-}
-
-.maze-cell.solution {
-  background-color: yellow;
+  background-color: red;
 }
 
 .maze-cell.visited {
-  background-color: lightblue;
-  transition: background-color 0.3s; 
+  background-color: rgba(0, 0, 255, 0.5); /* Blue with transparency */
 }
 
 .maze-cell.solution {
-  background-color: yellow;
-  transition: background-color 0.3s;
+  background-color: rgba(255, 255, 0, 0.8); /* Yellow with transparency */round-color: yellow;
 }
 
 
+.metrics {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
 
+.metrics h3 {
+  margin-bottom: 0.5rem;
+}
 
-
-
-
+.metrics p {
+  margin: 0.2rem 0;
+}

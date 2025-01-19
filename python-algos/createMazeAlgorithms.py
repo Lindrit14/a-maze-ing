@@ -10,32 +10,39 @@ def generate_maze(size, start, end):
     maze = [[1 for _ in range(WIDTH)] for _ in range(HEIGHT)]
     visited = set()
 
-    def in_bounds(r, c):    
+    def in_bounds(r, c):
         return 0 <= r < HEIGHT and 0 <= c < WIDTH
 
-    def visit(r, c):
-        """Carves out passages in steps of two, leaving walls in-between."""
-        visited.add((r, c))
-        maze[r][c] = 0  # Carve out current cell
+    def iterative_visit(start_r, start_c):
+        """Carves out passages using an iterative approach with a stack."""
+        stack = [(start_r, start_c)]  # Use a stack for DFS
+        visited.add((start_r, start_c))
+        maze[start_r][start_c] = 0  # Mark the starting cell as a path
 
-        # List of directions we can move in increments of 2
-        directions = [(-2, 0), (2, 0), (0, -2), (0, 2)]
-        random.shuffle(directions)
+        while stack:
+            r, c = stack[-1]
+            directions = [(-2, 0), (2, 0), (0, -2), (0, 2)]
+            random.shuffle(directions)
 
-        for dr, dc in directions:
-            nr, nc = r + dr, c + dc
-            if in_bounds(nr, nc) and (nr, nc) not in visited:
-                # Carve the wall between (r, c) and (nr, nc):
-                wall_r = r + (dr // 2)
-                wall_c = c + (dc // 2)
-                maze[wall_r][wall_c] = 0
+            for dr, dc in directions:
+                nr, nc = r + dr, c + dc
+                if in_bounds(nr, nc) and (nr, nc) not in visited:
+                    # Carve the wall between (r, c) and (nr, nc):
+                    wall_r = r + (dr // 2)
+                    wall_c = c + (dc // 2)
+                    maze[wall_r][wall_c] = 0
+                    maze[nr][nc] = 0
 
-                # Recursively carve the next cell
-                visit(nr, nc)
+                    visited.add((nr, nc))
+                    stack.append((nr, nc))
+                    break
+            else:
+                # If no valid neighbors, backtrack
+                stack.pop()
 
-    # Initialize the maze and carve paths
+    # Initialize the maze and carve paths iteratively
     visited.clear()
-    visit(start[0], start[1])
+    iterative_visit(start[0], start[1])
 
     # Ensure the start and end points are paths
     maze[start[0]][start[1]] = 0
