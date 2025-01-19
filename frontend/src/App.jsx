@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import "./App.css";
-import MazeDisplay from "./components/MazeDisplay";
 import MazeSolverAnimation from "./components/MazeSolverAnimation";
+import QlearningRunner from "./components/QlearningRunner";
 
 
 
@@ -86,8 +87,7 @@ useEffect(() => {
       setTotalVisitedSteps(data.totalVisitedSteps || 0); // Total visited steps
       setSolutionSteps(data.solutionSteps || 0); // Solution steps
       // Log them directly
-      console.log("Solution path:", data.solution);
-      console.log("Visited path:", data.visitedSequence);
+  
   
       setError(null);
     } catch (err) {
@@ -95,8 +95,6 @@ useEffect(() => {
     }
   };
 
-  console.log( "THIS IS VISITED",visited);
-  console.log( "THIS IS SOLUTION",solution.reverse());
   
 
   const handleAlgorithmSelect = (algorithm) => {
@@ -121,102 +119,124 @@ useEffect(() => {
 
   
   return (
-    <div>
-      
-      <button onClick={fetchMaze}>Generate Maze</button>
 
-      <div className="dropdown">
-        <label htmlFor="algorithm-select">Select Algorithm: </label>
-        <select
-          id="algorithm-select"
-          value={selectedAlgorithm}
-          onChange={(e) => handleAlgorithmSelect(e.target.value)}
-        >
-          <option value="DFS">DFS</option>
-          <option value="BFS">BFS</option>
-          <option value="Dijkstra">Dijkstra</option>
-          <option value="A-Star">A-Star</option>
-        </select>
-        <button onClick={solveMaze} disabled={maze.length === 0}>
-          Solve Maze
-        </button>
-      </div>
-
+    <Router>
       <div>
-        <label htmlFor="maze-size-select">Maze Size: </label>
-        <select
-          id="maze-size-select"
-          value={mazeSize}
-          onChange={(e) => handleSizeChange(e.target.value)}
-        >
-          <option value={21}>20 x 20</option>
-          <option value={31}>30 x 30</option>
-          <option value={41}>40 x 40</option>
-          <option value={51}>50 x 50</option>
-          <option value={61}>60 x 60</option>
-          <option value={71}>70 x 70</option>
-          <option value={81}>80 x 80</option>
-          <option value={201}>200 x 200</option>
-          <option value={301}>300 x 300</option>
-          <option value={501}>500 x 500</option>
-          <option value={1001}>INSANE x INSANE</option>
-        </select>
-      </div>
+        <nav>
+          <Link to="/">Home</Link> |{" "}
+          <Link to="/qlearning">Q-Learning Runner</Link>
+        </nav>
 
-      <div>
-        <label>
-          Start Node (row,col):{" "}
-          <input
-            type="text"
-            value={startNode.join(",")}
-            onChange={(e) => handleNodeChange("start", e.target.value)}
-          />
-        </label>
-        <label>
-          End Node (row,col):{" "}
-          <input
-            type="text"
-            value={endNode.join(",")}
-            onChange={(e) => handleNodeChange("end", e.target.value)}
-          />
-        </label>
-      </div>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <div>
 
-      <div>
-  <label>
-    Speed:
-    <select
-      value={animationSpeed}
-      onChange={(e) => setAnimationSpeed(parseInt(e.target.value, 10))}
-    >
-      <option value={150}>Slow</option>
-      <option value={50}>Medium</option>
-      <option value={25}>Fast</option>
-      <option value={1}>SuperFast</option>
-    </select>
-  </label>
-  
-</div>
     
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {maze.length > 0 && (
+              <button onClick={fetchMaze}>Generate Maze</button>
         
-        <MazeSolverAnimation
-        maze={maze}
-        visited={visited} // from solver
-        solution={solution}
-        start={startNode}
-        end={endNode}
-        speed={animationSpeed}  // e.g. 100, 500, 1000
-        runtime={runtime}
-        totalVisitedSteps={totalVisitedSteps}
-        solutionSteps={solutionSteps}
-      />
-      )}
-      {maze.length === 0 && !error && <p>Click "Generate Maze" to create a new maze!</p>}
-      
-    </div>
+              <div className="dropdown">
+                <label htmlFor="algorithm-select">Select Algorithm: </label>
+                <select
+                  id="algorithm-select"
+                  value={selectedAlgorithm}
+                  onChange={(e) => handleAlgorithmSelect(e.target.value)}
+                >
+                  <option value="DFS">DFS</option>
+                  <option value="BFS">BFS</option>
+                  <option value="Dijkstra">Dijkstra</option>
+                  <option value="A-Star">A-Star</option>
+                </select>
+                <button onClick={solveMaze} disabled={maze.length === 0}>
+                  Solve Maze
+                </button>
+              </div>
+        
+              <div>
+                <label htmlFor="maze-size-select">Maze Size: </label>
+                <select
+                  id="maze-size-select"
+                  value={mazeSize}
+                  onChange={(e) => handleSizeChange(e.target.value)}
+                >
+                  <option value={21}>20 x 20</option>
+                  <option value={31}>30 x 30</option>
+                  <option value={41}>40 x 40</option>
+                  <option value={51}>50 x 50</option>
+                  <option value={61}>60 x 60</option>
+                  <option value={71}>70 x 70</option>
+                  <option value={81}>80 x 80</option>
+                  <option value={201}>200 x 200</option>
+                  <option value={301}>300 x 300</option>
+                  <option value={501}>500 x 500</option>
+                  <option value={1001}>INSANE x INSANE</option>
+                </select>
+              </div>
+        
+              <div>
+                <label>
+                  Start Node (row,col):{" "}
+                  <input
+                    type="text"
+                    value={startNode.join(",")}
+                    onChange={(e) => handleNodeChange("start", e.target.value)}
+                  />
+                </label>
+                <label>
+                  End Node (row,col):{" "}
+                  <input
+                    type="text"
+                    value={endNode.join(",")}
+                    onChange={(e) => handleNodeChange("end", e.target.value)}
+                  />
+                </label>
+              </div>
+        
+              <div>
+          <label>
+            Speed:
+            <select
+              value={animationSpeed}
+              onChange={(e) => setAnimationSpeed(parseInt(e.target.value, 10))}
+            >
+              <option value={150}>Slow</option>
+              <option value={50}>Medium</option>
+              <option value={25}>Fast</option>
+              <option value={1}>SuperFast</option>
+            </select>
+          </label>
+          
+        </div>
+            
+        
+              {error && <p style={{ color: "red" }}>{error}</p>}
+              {maze.length > 0 && (
+                
+                <MazeSolverAnimation
+                maze={maze}
+                visited={visited} // from solver
+                solution={solution}
+                start={startNode}
+                end={endNode}
+                speed={animationSpeed}  // e.g. 100, 500, 1000
+                runtime={runtime}
+                totalVisitedSteps={totalVisitedSteps}
+                solutionSteps={solutionSteps}
+              />
+              )}
+              {maze.length === 0 && !error && <p>Click "Generate Maze" to create a new maze!</p>}
+              
+            </div>
+            }
+          />
+          <Route path="/qlearning" element={<QlearningRunner />} />
+        </Routes>
+      </div>
+    </Router>
+
+
+    
   );
 }
 

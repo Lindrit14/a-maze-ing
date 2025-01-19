@@ -90,4 +90,45 @@ router.post("/solve", (req, res) => {
 });
 
 
+// In your mazeRoutes.js or new file:
+router.post("/qlearn", (req, res) => {
+  const { maze, start, end, episodes } = req.body;
+
+  const pythonProcess = spawn("python3", [
+    "/Users/lindritprekaj/projects/a-maze-ing/python-algos/qLearningAlgorithms.py",
+  ]);
+
+  let output = "";
+  let errorOutput = "";
+
+  pythonProcess.stdin.write(JSON.stringify({ maze, start, end, episodes }));
+  pythonProcess.stdin.end();
+
+  pythonProcess.stdout.on("data", (data) => {
+    output += data.toString();
+  });
+
+  pythonProcess.stderr.on("data", (data) => {
+    errorOutput += data.toString();
+  });
+
+  pythonProcess.on("close", (code) => {
+    if (code !== 0) {
+      console.error(`Qlearning script error code ${code}: ${errorOutput}`);
+      return res.status(500).json({ error: errorOutput });
+    }
+
+    try {
+      const result = JSON.parse(output);
+      // result has: { episodesData: [...], bestPath: [...] }
+      res.json(result);
+    } catch (err) {
+      console.error("Failed to parse Qlearning output:", err);
+      res.status(500).json({ error: "Failed to parse Qlearning output" });
+    }
+  });
+});
+
+
+
 module.exports = router;

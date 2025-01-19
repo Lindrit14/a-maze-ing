@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 
 export default function MazeSolverAnimation({
+  // eslint-disable-next-line react/prop-types
   maze = [],
   visited = [],
   solution = [],
@@ -47,9 +48,7 @@ export default function MazeSolverAnimation({
         // Animate visited nodes
         setAnimationIndex((prev) => {
           const next = prev + 1;
-          console.log("Animating visited: ", next);
           if (next >= visited.length) {
-            console.log("Finished visited, switching to solution.");
             setAnimatingVisited(false); // Transition to solution animation
             return visited.length; // Cap to visited length
           }
@@ -59,9 +58,7 @@ export default function MazeSolverAnimation({
         // Animate solution nodes
         setSolutionIndex((prev) => {
           const next = prev + 1;
-          console.log("Animating solution: ", next);
           if (next >= solution.length) {
-            console.log("Animation complete.");
             clearInterval(intervalRef.current); // Stop animation
             setAnimating(false); // Stop animating
             setFinished(true);
@@ -78,8 +75,7 @@ export default function MazeSolverAnimation({
   const visitedSoFar = visited.slice(0, animationIndex);
   const solutionSoFar = solution.slice(0, solutionIndex);
 
-  console.log("Visited So Far:", visitedSoFar);
-  console.log("Solution So Far:", solutionSoFar);
+  
 
   return (
     <div>
