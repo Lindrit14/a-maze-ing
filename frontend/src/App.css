@@ -40,3 +40,61 @@
 .read-the-docs {
   color: #888;
 }
+/* App.css */
+
+/* The container for the maze grid */
+.maze-grid {
+  display: flex;
+  flex-direction: column; /* Arrange rows vertically */
+  gap: 2px; /* Space between rows (optional) */
+  padding: 10px;
+  background-color: #f7f7f7; /* Light background for visibility */
+  border: 2px solid #ccc; /* Border around the maze grid */
+}
+
+/* Each row in the maze */
+.maze-row {
+  display: flex;
+  gap: 2px; /* Space between cells (optional) */
+}
+
+/* Base style for each cell */
+.maze-cell {
+  width: 20px; /* Fixed width for each cell */
+  height: 20px; /* Fixed height for each cell */
+  border: 1px solid #ddd; /* Optional border around cells */
+  background-color: white; /* Default background color */
+}
+
+/* Wall cells */
+.maze-cell.wall {
+  background-color: black; /* Walls appear as black cells */
+}
+
+/* Start cell */
+.maze-cell.start {
+  background-color: green; /* Start cell appears green */
+}
+
+/* End cell */
+.maze-cell.end {
+  background-color: red; /* End cell appears red */
+}
+
+.maze-cell.solution {
+  background-color: yellow;
+}
+
+.maze-cell.visited {
+  background-color: lightblue; /* Visited nodes */
+}
+
+.maze-cell.solution {
+  background-color: yellow; /* Solution path */
+}
+
+
+
+
+
+
