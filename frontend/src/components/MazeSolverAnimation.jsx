@@ -120,7 +120,14 @@ function MazeGrid({ maze, start, end, visited, solution }) {
             if (rIndex === end[0] && cIndex === end[1]) {
               className += " end";
             }
-            if (visited.some(([vr, vc]) => vr === rIndex && vc === cIndex)) {
+            if (
+              visited.some(([vr, vc], idx) => {
+                const next = visited[idx + 1];
+                return vr === rIndex && vc === cIndex && next && maze[next[0]][next[1]] === 1;
+              })
+            ) {
+              className += " wall-hit"; // Highlight wall hit
+            } else if (visited.some(([vr, vc]) => vr === rIndex && vc === cIndex)) {
               className += " visited"; // Highlight visited
             }
             if (solution.some(([sr, sc]) => sr === rIndex && sc === cIndex)) {
