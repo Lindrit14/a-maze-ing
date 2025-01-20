@@ -96,3 +96,6 @@
 .metrics p {
   margin: 0.2rem 0;
 }
+.maze-cell.wall-hit {
+  background-color: red; /* Use a distinct color for wall collisions */
+}
